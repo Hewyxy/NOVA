@@ -8,6 +8,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
+using NOVA.Desktop.ViewModels;
 
 namespace NOVA.Desktop
 {
@@ -19,6 +21,15 @@ namespace NOVA.Desktop
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
+        }
+
+        private async void InitializeNOVA_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainViewModel viewModel)
+            {
+                await viewModel.InitializeAsync();
+            }
         }
     }
 }
