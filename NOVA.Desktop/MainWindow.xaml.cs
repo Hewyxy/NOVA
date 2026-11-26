@@ -24,12 +24,5 @@ namespace NOVA.Desktop
             DataContext = new MainViewModel();
         }
 
-        private async void InitializeNOVA_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is MainViewModel viewModel)
-            {
-                await viewModel.InitializeAsync();
-            }
-        }
     }
 }

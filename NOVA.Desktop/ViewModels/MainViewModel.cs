@@ -7,10 +7,14 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
+using NOVA.Desktop.Commands;
+using System.Windows.Input;
+
 namespace NOVA.Desktop.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        public ICommand InitializeCommand { get; }
         private string _status = "Status: Idle";
 
         public string Status
@@ -22,14 +26,32 @@ namespace NOVA.Desktop.ViewModels
                 OnPropertyChanged();
             }
         }
+        public MainViewModel()
+        {
+            InitializeCommand = new RelayCommand(
+                async () => await InitializeAsync(),
+                CanInitialize
+            );
+        }
 
         public async Task InitializeAsync()
         {
-            Status = "Status: Initializing NOVA...";
+            _isInitializing = true;
+            (InitializeCommand as RelayCommand)?.RaiseCanExecuteChanged();
 
-            await Task.Delay(2000);
+            try
+            {
+                Status = "Status: Initializing NOVA...";
 
-            Status = "Status: NOVA is now live!";
+                await Task.Delay(2000);
+
+                Status = "Status: NOVA is now live!";
+            }
+            finally
+            {
+                _isInitializing = false;
+                (InitializeCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -40,6 +62,12 @@ namespace NOVA.Desktop.ViewModels
             PropertyChanged?.Invoke(
                 this,
                 new PropertyChangedEventArgs(propertyName));
+        }
+
+        private bool _isInitializing;
+        public bool CanInitialize()
+        {
+            return !_isInitializing;
         }
     }
 }
