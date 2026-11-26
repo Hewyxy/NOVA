@@ -28,30 +28,16 @@ namespace NOVA.Desktop.ViewModels
         }
         public MainViewModel()
         {
-            InitializeCommand = new RelayCommand(
-                async () => await InitializeAsync(),
-                CanInitialize
-            );
+            InitializeCommand = new AsyncRelayCommand(InitializeAsync);
         }
 
         public async Task InitializeAsync()
         {
-            _isInitializing = true;
-            (InitializeCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            Status = "Status: Initializing NOVA...";
 
-            try
-            {
-                Status = "Status: Initializing NOVA...";
+            await Task.Delay(2000);
 
-                await Task.Delay(2000);
-
-                Status = "Status: NOVA is now live!";
-            }
-            finally
-            {
-                _isInitializing = false;
-                (InitializeCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            }
+            Status = "Status: NOVA is now live!";
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
